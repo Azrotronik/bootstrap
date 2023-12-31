@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-function get_github_latest_release() {
+get_github_latest_release() {
     ver=$(curl --silent "https://api.github.com/repos/$1/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     wget "https://github.com/$1/releases/download/$ver/$2-$ver.$3"
     echo $ver
@@ -29,8 +29,8 @@ install_service(){
 	systemctl enable --now $1
 }
 
-function service_dnsproxy(){
-	echo "Installing DNS Service"
+service_dnsproxy(){
+	echo ">service_dnsproxy: Installing"
 	ver=$(get_github_latest_release AdguardTeam/dnsproxy dnsproxy-linux-amd64 tar.gz)
 	tar xvf dnsproxy-linux-amd64-$ver.tar.gz 
 	mv linux-amd64/dnsproxy dnsproxy
@@ -38,7 +38,7 @@ function service_dnsproxy(){
 	rm -rf linux-amd64
 	echo '127.0.0.1' > /etc/resolv.conf
 	lock_file          /etc/resolv.conf
-	echo "Fully applied dnsproxy"
+	echo ">service_dnsproxy: Success"
 }
 #groups wireshark libvirt video kvm
 #rkhunter ufw dhcpcd macchanger kismet usbguard tlp-rdw
