@@ -2,9 +2,15 @@
 set -xe
 
 function get_github_latest_release() {
-	ver=$(curl --silent "https://api.github.com/repos/$1/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    ver=$(curl --silent "https://api.github.com/repos/$1/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     wget "https://github.com/$1/releases/download/$ver/$2-$ver.$3"
     echo $ver
+}
+
+lock_file(){
+    file=$1
+    chattr +i $file
+    sha256sum $file >> hashes.txt
 }
 
 install_binary() {
@@ -12,16 +18,14 @@ install_binary() {
     mv $1           $binpath
     chown root:root $binpath
     chmod 0500      $binpath
-    chattr +i       $binpath
-    sha256sum       $binpath >> hashes.txt
+    lock_file       $binpath
 }
 
 install_service(){
 	install_binary $1
 	service_file=/etc/systemd/system/$1.service
 	cp services/$1.service $service_file
-	chattr +i              $service_file
-    sha256sum              $service_file >> hashes.txt
+	lock_file              $service_file
 	systemctl enable --now $1
 }
 
@@ -33,7 +37,7 @@ function service_dnsproxy(){
 	install_service dnsproxy
 	rm -rf linux-amd64
 	echo '127.0.0.1' > /etc/resolv.conf
-	chattr +i /etc/resolv.conf
+	lock_file          /etc/resolv.conf
 	echo "Fully applied dnsproxy"
 }
 #groups wireshark libvirt video kvm
