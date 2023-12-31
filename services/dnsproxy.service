@@ -1,0 +1,21 @@
+# /etc/systemd/system/dnsproxy.service
+[Unit]
+Description=dnsproxy
+After=syslog.target
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=1s
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/tmp/
+
+ExecStart=/usr/bin/dnsproxy -l 127.0.0.1 -u tls://dns.quad9.net -b 9.9.9.9:53 --fallback 9.9.9.9:53 --fallback 1.1.1.1:53 --cache --cache-optimistic --max-go-routines 16 --verbose -o /var/log/dns
+
+#CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+#AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
