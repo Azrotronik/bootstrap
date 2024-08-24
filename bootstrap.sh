@@ -44,6 +44,7 @@ install_base(){
 	addgroup $1 audio
 	addgroup $1 input
 	echo vfio >> /etc/modules # Fuck a jeep in the ass
+ 	echo tun >> /etc/modules # Fuck a jeep in the ass
 }
 
 install_binary() {
