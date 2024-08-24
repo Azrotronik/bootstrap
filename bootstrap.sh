@@ -28,9 +28,7 @@ install_base(){
 	apk add lightdm lightdm-gtk-greeter
 	apk add xf86-video-amdgpu xf86-video-nouveau
 	apk add xf86-input-evdev  xf86-input-synaptics xf86-input-libinput xf86-input-mtrack
-	apk add tlp-rdw
-	apk add keepassxc
-	apk add git go
+	apk add tlp-rdw keepassxc git go wireguard
 
 	rc-update add lightdm
 	rc-update add polkit
