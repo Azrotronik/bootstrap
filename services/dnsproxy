@@ -1,0 +1,22 @@
+#!/sbin/openrc-run
+
+depend() {
+  need net
+}
+
+start() {
+  ebegin "Starting DNSProxy"
+  start-stop-daemon --start --background --exec /usr/bin/dnsproxy -- -u tls://dns.quad9.net -b 9.9.9.9:53 --fallback 9.9.9.9:53 --fallback 1.1.1.1:53 --cache --cache-optimistic --max-go-routines 32 --verbose -o /var/log/dns -l 127.0.0.1
+  eend $?
+}
+
+stop() {
+  ebegin "Stopping DNSProxy"
+  start-stop-daemon --stop --exec /usr/bin/dnsproxy
+  eend $?
+}
+
+restart() {
+  stop
+  start
+}
